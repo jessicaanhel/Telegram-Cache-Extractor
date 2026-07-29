@@ -767,6 +767,11 @@ root.geometry(f"{_win_w}x{_win_h}")
 root.minsize(700, 640)
 root.configure(bg=BG)
 
+try:
+    root.iconbitmap(resource_path("icon.ico"))
+except Exception:
+    pass  # если icon.ico не найден (например, запуск без сборки) - используем иконку по умолчанию
+
 main_frame   = tk.Frame(root, bg=BG)
 donate_frame = tk.Frame(root, bg=BG)
 social_frame = tk.Frame(root, bg=BG)

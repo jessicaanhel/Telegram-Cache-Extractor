@@ -13,9 +13,16 @@ __pycache__/
 # Build files
 build/
 dist/
+installer_output/
 
 # PyInstaller
 *.spec
+
+#installer
+installer.iss
+
+#icon
+icon.ico
 
 # Logs
 *.log

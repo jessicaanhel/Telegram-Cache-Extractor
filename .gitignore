@@ -1,32 +1,24 @@
-# Virtual environment
-.venv/
-venv/
-env/
-
-# PyCharm
-.idea/
-
-# Python cache
-__pycache__/
-*.py[cod]
-
-# Build files
+# PyInstaller
 build/
 dist/
-installer_output/
-
-# PyInstaller
 *.spec
 
-#installer
-installer.iss
+# Inno Setup
+installer_output/
+Output/
 
-#icon
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+#Icon
 icon.ico
 
-# Logs
-*.log
+# IDE
+.idea/
 
-# OS files
-.DS_Store
-Thumbs.db
+# Извлечённые пользователем данные (на случай, если кто-то запустит рядом с репо)
+telegram_extracted/

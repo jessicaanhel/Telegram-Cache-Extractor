@@ -7,6 +7,9 @@ dist/
 installer_output/
 Output/
 
+# macOS DMG
+*.dmg
+
 
 # Python
 __pycache__/
@@ -16,9 +19,12 @@ venv/
 
 #Icon
 icon.ico
+icon.icns
+icon.iconset
 
 # IDE
 .idea/
+.DS_Store
 
 # Извлечённые пользователем данные (на случай, если кто-то запустит рядом с репо)
 telegram_extracted/

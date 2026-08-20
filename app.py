@@ -14,11 +14,6 @@ import tkinter as tk
 from tkinter import filedialog, messagebox
 
 try:
-    import pyperclip
-except ImportError:
-    pyperclip = None
-
-try:
     from Crypto.Cipher import AES
 except ImportError:
     AES = None
@@ -554,11 +549,8 @@ def run_pipeline(tdata_path: str, out_dir: str, passcode: str, log, done):
 # ===========================================================================
 
 def _clipboard_copy(text: str) -> None:
-    if pyperclip is not None:
-        pyperclip.copy(text)
-    else:
-        root.clipboard_clear()
-        root.clipboard_append(text)
+    root.clipboard_clear()
+    root.clipboard_append(text)
 
 
 def open_link(url: str) -> None:
@@ -768,9 +760,11 @@ root.minsize(700, 640)
 root.configure(bg=BG)
 
 try:
-    root.iconbitmap(resource_path("icon.ico"))
+    # На macOS Tk ожидает .icns, на Windows/Linux - .ico
+    icon_name = "icon.icns" if sys.platform == "darwin" else "icon.ico"
+    root.iconbitmap(resource_path(icon_name))
 except Exception:
-    pass  # если icon.ico не найден (например, запуск без сборки) - используем иконку по умолчанию
+    pass  # если файл иконки не найден (например, запуск без сборки) - используем иконку по умолчанию
 
 main_frame   = tk.Frame(root, bg=BG)
 donate_frame = tk.Frame(root, bg=BG)
@@ -818,7 +812,17 @@ status_label.pack(pady=(0, 10))
 form = tk.Frame(main_frame, bg=BG)
 form.pack(pady=5, fill="x", padx=30)
 
-default_tdata = os.path.join(os.environ.get("APPDATA", ""), "Telegram Desktop", "tdata")
+def default_tdata_path() -> str:
+    if sys.platform == "win32":
+        return os.path.join(os.environ.get("APPDATA", ""), "Telegram Desktop", "tdata")
+    if sys.platform == "darwin":
+        return os.path.join(os.path.expanduser("~"), "Library", "Application Support",
+                             "Telegram Desktop", "tdata")
+    # Linux (обычное расположение Telegram Desktop)
+    return os.path.join(os.path.expanduser("~"), ".local", "share", "TelegramDesktop", "tdata")
+
+
+default_tdata = default_tdata_path()
 default_out = os.path.join(os.path.expanduser("~"), "Desktop", "telegram_extracted")
 
 tk.Label(form, text="Папка tdata:", bg=BG, fg=TEXT, font=("Arial", 11)).grid(row=0, column=0, sticky="w", pady=6)

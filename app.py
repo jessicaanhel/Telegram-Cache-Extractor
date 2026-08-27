@@ -31,6 +31,16 @@ def resource_path(relative_path: str) -> str:
     return os.path.join(base_path, relative_path)
 
 
+def default_tdata_path() -> str:
+    if sys.platform == "win32":
+        return os.path.join(os.environ.get("APPDATA", ""), "Telegram Desktop", "tdata")
+    if sys.platform == "darwin":
+        return os.path.join(os.path.expanduser("~"), "Library", "Application Support",
+                             "Telegram Desktop", "tdata")
+    # Linux (обычное расположение Telegram Desktop)
+    return os.path.join(os.path.expanduser("~"), ".local", "share", "TelegramDesktop", "tdata")
+
+
 TELEGRAM_URL = "https://t.me/IK_Flex_Air"
 YOUTUBE_URL  = "https://www.youtube.com/@FlexAir-pwn"
 
@@ -738,205 +748,196 @@ def open_gallery() -> None:
 # GUI — WINDOW CONSTRUCTION
 # ===========================================================================
 
-if sys.platform == "win32":
-    try:
-        import ctypes
-        ctypes.windll.shcore.SetProcessDpiAwareness(1)
-    except Exception:
-        try:
-            ctypes.windll.user32.SetProcessDPIAware()
-        except Exception:
-            pass
-
-root = tk.Tk()
-root.title("Telegram Cache Extractor - by Flex Air")
-
-_screen_w = root.winfo_screenwidth()
-_screen_h = root.winfo_screenheight()
-_win_w = max(700, min(860, int(_screen_w * 0.55)))
-_win_h = max(680, min(900, int(_screen_h * 0.85)))
-root.geometry(f"{_win_w}x{_win_h}")
-root.minsize(700, 640)
-root.configure(bg=BG)
-
-try:
-    # На macOS Tk ожидает .icns, на Windows/Linux - .ico
-    icon_name = "icon.icns" if sys.platform == "darwin" else "icon.ico"
-    root.iconbitmap(resource_path(icon_name))
-except Exception:
-    pass  # если файл иконки не найден (например, запуск без сборки) - используем иконку по умолчанию
-
-main_frame   = tk.Frame(root, bg=BG)
-donate_frame = tk.Frame(root, bg=BG)
-social_frame = tk.Frame(root, bg=BG)
-social_frame.place(relx=1.0, x=-10, y=10, anchor="ne")
-
-# ── Icons ────────────────────────────────────────────────────────────────────
-btc_icon      = tk.PhotoImage(file=resource_path("icons/btc_icon.png"))
-eth_icon      = tk.PhotoImage(file=resource_path("icons/etherium_icon.png"))
-bnb_icon      = tk.PhotoImage(file=resource_path("icons/bnb_icon.png"))
-sol_icon      = tk.PhotoImage(file=resource_path("icons/solana_icon.png"))
-ton_icon      = tk.PhotoImage(file=resource_path("icons/ton_icon.png"))
-tron_icon     = tk.PhotoImage(file=resource_path("icons/tron_icon.png"))
-copy_icon     = tk.PhotoImage(file=resource_path("icons/Copy_icon.png"))
-telegram_icon = tk.PhotoImage(file=resource_path("icons/telegram_icon.png"))
-youtube_icon  = tk.PhotoImage(file=resource_path("icons/YT_icon.png"))
-
-DONATE_DATA = [
-    ("BTC", btc_icon,  "bc1qnjv8d2ecf3uwwugdf3jlxyc020e2ztc8s0zghv"),
-    ("ETH", eth_icon,  "0x108e08febfbe3e47a9c15e484fd6587f4a0c6279"),
-    ("BNB", bnb_icon,  "0x108e08febfbe3e47a9c15e484fd6587f4a0c6279"),
-    ("SOL", sol_icon,  "GEgnqADD4WJTDz1syRMyaK9qjn2jhhEknhreoZwWXT9T"),
-    ("TON", ton_icon,  "UQBZb8OHkXr08m1CWM_eGX40TMbeIUAVEWQeMLKl8RWZ2462"),
-    ("TRX", tron_icon, "TJxdGZTtp9MeXF2EijYAR4BK5wNH99kJgW"),
-]
-
-# ── Main frame: header ────────────────────────────────────────────────────────
-tk.Label(
-    main_frame, text="TELEGRAM CACHE EXTRACTOR",
-    font=("Segoe UI", 26, "bold"), bg=BG, fg=TEXT,
-).pack(pady=(45, 0))
-
-tk.Label(
-    main_frame, text="by IK of Flex Air",
-    font=("Segoe UI", 10), bg=BG, fg="#aaaaaa",
-).pack(pady=(0, 15))
-
-status_label = tk.Label(
-    main_frame, text="Ready",
-    font=("Arial", 18), bg=BG, fg=ACCENT,
-)
-status_label.pack(pady=(0, 10))
-
-# ── Main frame: пути и passcode ────────────────────────────────────────────────
-form = tk.Frame(main_frame, bg=BG)
-form.pack(pady=5, fill="x", padx=30)
-
-def default_tdata_path() -> str:
+if __name__ == "__main__":
     if sys.platform == "win32":
-        return os.path.join(os.environ.get("APPDATA", ""), "Telegram Desktop", "tdata")
-    if sys.platform == "darwin":
-        return os.path.join(os.path.expanduser("~"), "Library", "Application Support",
-                             "Telegram Desktop", "tdata")
-    # Linux (обычное расположение Telegram Desktop)
-    return os.path.join(os.path.expanduser("~"), ".local", "share", "TelegramDesktop", "tdata")
+        try:
+            import ctypes
+            ctypes.windll.shcore.SetProcessDpiAwareness(1)
+        except Exception:
+            try:
+                ctypes.windll.user32.SetProcessDPIAware()
+            except Exception:
+                pass
 
+    root = tk.Tk()
+    root.title("Telegram Cache Extractor - by Flex Air")
 
-default_tdata = default_tdata_path()
-default_out = os.path.join(os.path.expanduser("~"), "Desktop", "telegram_extracted")
+    _screen_w = root.winfo_screenwidth()
+    _screen_h = root.winfo_screenheight()
+    _win_w = max(700, min(860, int(_screen_w * 0.55)))
+    _win_h = max(680, min(900, int(_screen_h * 0.85)))
+    root.geometry(f"{_win_w}x{_win_h}")
+    root.minsize(700, 640)
+    root.configure(bg=BG)
 
-tk.Label(form, text="Папка tdata:", bg=BG, fg=TEXT, font=("Arial", 11)).grid(row=0, column=0, sticky="w", pady=6)
-tdata_var = tk.StringVar(value=default_tdata)
-tk.Entry(form, textvariable=tdata_var, font=("Consolas", 10), bg=CARD, fg=TEXT,
-         insertbackground=TEXT, relief="flat").grid(row=0, column=1, sticky="we", padx=8, pady=6)
-tk.Button(form, text="Обзор...", command=pick_tdata, font=("Arial", 10), bg=BTN, fg=TEXT,
-          activebackground=BTN_HOVER, activeforeground=TEXT, relief="flat",
-          borderwidth=0, cursor="hand2").grid(row=0, column=2, pady=6)
+    try:
+        # На macOS Tk ожидает .icns, на Windows/Linux - .ico
+        icon_name = "icon.icns" if sys.platform == "darwin" else "icon.ico"
+        root.iconbitmap(resource_path(icon_name))
+    except Exception:
+        pass  # если файл иконки не найден (например, запуск без сборки) - используем иконку по умолчанию
 
-tk.Label(form, text="Куда сохранить:", bg=BG, fg=TEXT, font=("Arial", 11)).grid(row=1, column=0, sticky="w", pady=6)
-out_var = tk.StringVar(value=default_out)
-tk.Entry(form, textvariable=out_var, font=("Consolas", 10), bg=CARD, fg=TEXT,
-         insertbackground=TEXT, relief="flat").grid(row=1, column=1, sticky="we", padx=8, pady=6)
-tk.Button(form, text="Обзор...", command=pick_out, font=("Arial", 10), bg=BTN, fg=TEXT,
-          activebackground=BTN_HOVER, activeforeground=TEXT, relief="flat",
-          borderwidth=0, cursor="hand2").grid(row=1, column=2, pady=6)
+    main_frame   = tk.Frame(root, bg=BG)
+    donate_frame = tk.Frame(root, bg=BG)
+    social_frame = tk.Frame(root, bg=BG)
+    social_frame.place(relx=1.0, x=-10, y=10, anchor="ne")
 
-tk.Label(form, text="Passcode (если не задан - оставь пустым):", bg=BG, fg=TEXT,
-         font=("Arial", 11)).grid(row=2, column=0, columnspan=2, sticky="w", pady=6)
-passcode_var = tk.StringVar(value="")
-tk.Entry(form, textvariable=passcode_var, show="*", font=("Consolas", 10), bg=CARD, fg=TEXT,
-         insertbackground=TEXT, relief="flat", width=25).grid(row=3, column=0, sticky="w", pady=(0, 6))
+    # ── Icons ────────────────────────────────────────────────────────────────────
+    btc_icon      = tk.PhotoImage(file=resource_path("icons/btc_icon.png"))
+    eth_icon      = tk.PhotoImage(file=resource_path("icons/etherium_icon.png"))
+    bnb_icon      = tk.PhotoImage(file=resource_path("icons/bnb_icon.png"))
+    sol_icon      = tk.PhotoImage(file=resource_path("icons/solana_icon.png"))
+    ton_icon      = tk.PhotoImage(file=resource_path("icons/ton_icon.png"))
+    tron_icon     = tk.PhotoImage(file=resource_path("icons/tron_icon.png"))
+    copy_icon     = tk.PhotoImage(file=resource_path("icons/Copy_icon.png"))
+    telegram_icon = tk.PhotoImage(file=resource_path("icons/telegram_icon.png"))
+    youtube_icon  = tk.PhotoImage(file=resource_path("icons/YT_icon.png"))
 
-form.grid_columnconfigure(1, weight=1)
+    DONATE_DATA = [
+        ("BTC", btc_icon,  "bc1qnjv8d2ecf3uwwugdf3jlxyc020e2ztc8s0zghv"),
+        ("ETH", eth_icon,  "0x108e08febfbe3e47a9c15e484fd6587f4a0c6279"),
+        ("BNB", bnb_icon,  "0x108e08febfbe3e47a9c15e484fd6587f4a0c6279"),
+        ("SOL", sol_icon,  "GEgnqADD4WJTDz1syRMyaK9qjn2jhhEknhreoZwWXT9T"),
+        ("TON", ton_icon,  "UQBZb8OHkXr08m1CWM_eGX40TMbeIUAVEWQeMLKl8RWZ2462"),
+        ("TRX", tron_icon, "TJxdGZTtp9MeXF2EijYAR4BK5wNH99kJgW"),
+    ]
 
-# ── Main frame: кнопка запуска ─────────────────────────────────────────────────
-start_btn = tk.Button(
-    main_frame, text="Начать извлечение", command=start_extraction,
-    width=35, font=("Arial", 16), bg=BTN, fg=TEXT,
-    activebackground=BTN_HOVER, activeforeground=TEXT,
-    relief="flat", borderwidth=0, cursor="hand2",
-)
-start_btn.pack(pady=10)
+    # ── Main frame: header ────────────────────────────────────────────────────────
+    tk.Label(
+        main_frame, text="TELEGRAM CACHE EXTRACTOR",
+        font=("Segoe UI", 26, "bold"), bg=BG, fg=TEXT,
+    ).pack(pady=(45, 0))
 
-# ── Main frame: лог ──────────────────────────────────────────────────────────
-tk.Label(main_frame, text="Лог", font=("Arial", 13), bg=BG, fg=TEXT).pack(pady=(10, 5))
+    tk.Label(
+        main_frame, text="by IK of Flex Air",
+        font=("Segoe UI", 10), bg=BG, fg="#aaaaaa",
+    ).pack(pady=(0, 15))
 
-log_frame = tk.Frame(main_frame, bg=CARD)
-log_frame.pack(fill="both", expand=True, padx=30, pady=(0, 10))
+    status_label = tk.Label(
+        main_frame, text="Ready",
+        font=("Arial", 18), bg=BG, fg=ACCENT,
+    )
+    status_label.pack(pady=(0, 10))
 
-scrollbar = tk.Scrollbar(log_frame, bg=BTN, troughcolor=BG)
-log_text = tk.Text(
-    log_frame,
-    font=("Consolas", 10), bg=PREVIEW_BG, fg=PREVIEW_TEXT,
-    insertbackground="white", relief="flat",
-    yscrollcommand=scrollbar.set,
-)
-scrollbar.config(command=log_text.yview)
-scrollbar.pack(side="right", fill="y")
-log_text.pack(side="left", fill="both", expand=True)
+    # ── Main frame: пути и passcode ────────────────────────────────────────────────
+    form = tk.Frame(main_frame, bg=BG)
+    form.pack(pady=5, fill="x", padx=30)
 
-gallery_btn = tk.Button(
-    main_frame, text="Открыть галерею", command=open_gallery, state="disabled",
-    width=35, font=("Arial", 16), bg=BTN, fg=TEXT,
-    activebackground=BTN_HOVER, activeforeground=TEXT,
-    relief="flat", borderwidth=0, cursor="hand2",
-)
-gallery_btn.pack(pady=(0, 15))
+    default_tdata = default_tdata_path()
+    default_out = os.path.join(os.path.expanduser("~"), "Desktop", "telegram_extracted")
 
-# ── Main frame: Donate (top-left) ─────────────────────────────────────────────
-btn_donate = tk.Button(
-    main_frame, text="Donate", command=show_donate,
-    font=("Arial", 15), bg=BTN, fg=TEXT,
-    activebackground=BTN_HOVER, activeforeground=TEXT,
-    relief="flat", borderwidth=0, cursor="hand2",
-)
-btn_donate.place(x=10, y=10)
+    tk.Label(form, text="Папка tdata:", bg=BG, fg=TEXT, font=("Arial", 11)).grid(row=0, column=0, sticky="w", pady=6)
+    tdata_var = tk.StringVar(value=default_tdata)
+    tk.Entry(form, textvariable=tdata_var, font=("Consolas", 10), bg=CARD, fg=TEXT,
+             insertbackground=TEXT, relief="flat").grid(row=0, column=1, sticky="we", padx=8, pady=6)
+    tk.Button(form, text="Обзор...", command=pick_tdata, font=("Arial", 10), bg=BTN, fg=TEXT,
+              activebackground=BTN_HOVER, activeforeground=TEXT, relief="flat",
+              borderwidth=0, cursor="hand2").grid(row=0, column=2, pady=6)
 
-# ── Social bar (top-right) ────────────────────────────────────────────────────
-socials_row = tk.Frame(social_frame, bg=BG)
-socials_row.pack(anchor="e", pady=2)
+    tk.Label(form, text="Куда сохранить:", bg=BG, fg=TEXT, font=("Arial", 11)).grid(row=1, column=0, sticky="w", pady=6)
+    out_var = tk.StringVar(value=default_out)
+    tk.Entry(form, textvariable=out_var, font=("Consolas", 10), bg=CARD, fg=TEXT,
+             insertbackground=TEXT, relief="flat").grid(row=1, column=1, sticky="we", padx=8, pady=6)
+    tk.Button(form, text="Обзор...", command=pick_out, font=("Arial", 10), bg=BTN, fg=TEXT,
+              activebackground=BTN_HOVER, activeforeground=TEXT, relief="flat",
+              borderwidth=0, cursor="hand2").grid(row=1, column=2, pady=6)
 
-btn_telegram = tk.Button(
-    socials_row, image=telegram_icon, command=lambda: open_link(TELEGRAM_URL),
-    bg=BTN, fg=TEXT, activebackground=BTN_HOVER, activeforeground=TEXT,
-    relief="flat", borderwidth=0, cursor="hand2",
-)
-btn_telegram.pack(side="left")
+    tk.Label(form, text="Passcode (если не задан - оставь пустым):", bg=BG, fg=TEXT,
+             font=("Arial", 11)).grid(row=2, column=0, columnspan=2, sticky="w", pady=6)
+    passcode_var = tk.StringVar(value="")
+    tk.Entry(form, textvariable=passcode_var, show="*", font=("Consolas", 10), bg=CARD, fg=TEXT,
+             insertbackground=TEXT, relief="flat", width=25).grid(row=3, column=0, sticky="w", pady=(0, 6))
 
-btn_copy_tg = tk.Button(
-    socials_row, image=copy_icon, command=lambda: copy_link(TELEGRAM_URL),
-    bg=BTN, fg=TEXT, activebackground=BTN_HOVER, activeforeground=TEXT,
-    relief="flat", borderwidth=0, cursor="hand2",
-)
-btn_copy_tg.pack(side="left", padx=5)
+    form.grid_columnconfigure(1, weight=1)
 
-btn_youtube = tk.Button(
-    socials_row, image=youtube_icon, command=lambda: open_link(YOUTUBE_URL),
-    bg=BTN, fg=TEXT, activebackground=BTN_HOVER, activeforeground=TEXT,
-    relief="flat", borderwidth=0, cursor="hand2",
-)
-btn_youtube.pack(side="left", padx=(20, 0))
+    # ── Main frame: кнопка запуска ─────────────────────────────────────────────────
+    start_btn = tk.Button(
+        main_frame, text="Начать извлечение", command=start_extraction,
+        width=35, font=("Arial", 16), bg=BTN, fg=TEXT,
+        activebackground=BTN_HOVER, activeforeground=TEXT,
+        relief="flat", borderwidth=0, cursor="hand2",
+    )
+    start_btn.pack(pady=10)
 
-btn_copy_yt = tk.Button(
-    socials_row, image=copy_icon, command=lambda: copy_link(YOUTUBE_URL),
-    bg=BTN, fg=TEXT, activebackground=BTN_HOVER, activeforeground=TEXT,
-    relief="flat", borderwidth=0, cursor="hand2",
-)
-btn_copy_yt.pack(side="left", padx=5)
+    # ── Main frame: лог ──────────────────────────────────────────────────────────
+    tk.Label(main_frame, text="Лог", font=("Arial", 13), bg=BG, fg=TEXT).pack(pady=(10, 5))
 
-for btn, img in [
-    (btn_telegram, telegram_icon),
-    (btn_youtube,  youtube_icon),
-    (btn_copy_tg,  copy_icon),
-    (btn_copy_yt,  copy_icon),
-]:
-    btn.image = img
+    log_frame = tk.Frame(main_frame, bg=CARD)
+    log_frame.pack(fill="both", expand=True, padx=30, pady=(0, 10))
 
-# ===========================================================================
-# STARTUP
-# ===========================================================================
+    scrollbar = tk.Scrollbar(log_frame, bg=BTN, troughcolor=BG)
+    log_text = tk.Text(
+        log_frame,
+        font=("Consolas", 10), bg=PREVIEW_BG, fg=PREVIEW_TEXT,
+        insertbackground="white", relief="flat",
+        yscrollcommand=scrollbar.set,
+    )
+    scrollbar.config(command=log_text.yview)
+    scrollbar.pack(side="right", fill="y")
+    log_text.pack(side="left", fill="both", expand=True)
 
-root.bind("<Escape>", on_esc)
+    gallery_btn = tk.Button(
+        main_frame, text="Открыть галерею", command=open_gallery, state="disabled",
+        width=35, font=("Arial", 16), bg=BTN, fg=TEXT,
+        activebackground=BTN_HOVER, activeforeground=TEXT,
+        relief="flat", borderwidth=0, cursor="hand2",
+    )
+    gallery_btn.pack(pady=(0, 15))
 
-main_frame.pack(fill="both", expand=True)
-root.mainloop()
+    # ── Main frame: Donate (top-left) ─────────────────────────────────────────────
+    btn_donate = tk.Button(
+        main_frame, text="Donate", command=show_donate,
+        font=("Arial", 15), bg=BTN, fg=TEXT,
+        activebackground=BTN_HOVER, activeforeground=TEXT,
+        relief="flat", borderwidth=0, cursor="hand2",
+    )
+    btn_donate.place(x=10, y=10)
+
+    # ── Social bar (top-right) ────────────────────────────────────────────────────
+    socials_row = tk.Frame(social_frame, bg=BG)
+    socials_row.pack(anchor="e", pady=2)
+
+    btn_telegram = tk.Button(
+        socials_row, image=telegram_icon, command=lambda: open_link(TELEGRAM_URL),
+        bg=BTN, fg=TEXT, activebackground=BTN_HOVER, activeforeground=TEXT,
+        relief="flat", borderwidth=0, cursor="hand2",
+    )
+    btn_telegram.pack(side="left")
+
+    btn_copy_tg = tk.Button(
+        socials_row, image=copy_icon, command=lambda: copy_link(TELEGRAM_URL),
+        bg=BTN, fg=TEXT, activebackground=BTN_HOVER, activeforeground=TEXT,
+        relief="flat", borderwidth=0, cursor="hand2",
+    )
+    btn_copy_tg.pack(side="left", padx=5)
+
+    btn_youtube = tk.Button(
+        socials_row, image=youtube_icon, command=lambda: open_link(YOUTUBE_URL),
+        bg=BTN, fg=TEXT, activebackground=BTN_HOVER, activeforeground=TEXT,
+        relief="flat", borderwidth=0, cursor="hand2",
+    )
+    btn_youtube.pack(side="left", padx=(20, 0))
+
+    btn_copy_yt = tk.Button(
+        socials_row, image=copy_icon, command=lambda: copy_link(YOUTUBE_URL),
+        bg=BTN, fg=TEXT, activebackground=BTN_HOVER, activeforeground=TEXT,
+        relief="flat", borderwidth=0, cursor="hand2",
+    )
+    btn_copy_yt.pack(side="left", padx=5)
+
+    for btn, img in [
+        (btn_telegram, telegram_icon),
+        (btn_youtube,  youtube_icon),
+        (btn_copy_tg,  copy_icon),
+        (btn_copy_yt,  copy_icon),
+    ]:
+        btn.image = img
+
+    # ===========================================================================
+    # STARTUP
+    # ===========================================================================
+
+    root.bind("<Escape>", on_esc)
+
+    main_frame.pack(fill="both", expand=True)
+    root.mainloop()

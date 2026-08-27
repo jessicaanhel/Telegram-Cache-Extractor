@@ -128,6 +128,32 @@ bash build_macos.sh
 Делает `build_macos.sh` из раздела выше (собирает `.app` и сразу пакует в `.dmg` за один запуск) -> TelegramCacheExtractor.dmg
 Открыв такой `.dmg`, увидишь и иконку приложения, и иконку `Applications` рядом — перетаскивание работает как в обычных macOS-инсталляторах.
 
+## Нативный macOS-фронтенд (TelegramCacheExtractor-macos)
+
+В папке `macos/` лежит альтернативный интерфейс специально для macOS — тёмный UI в нативном окне WKWebView (через `pywebview`) вместо классических Tk-окон. Это **дополнительный** вариант: он переиспользует ту же крипто-логику из `app.py` без изменений и никак не трогает Windows-флоу (`app.py`'s Tk-экраны, `installer.iss`, `build_macos.sh`) — тот продолжает работать как прежде.
+
+Отличия от классического Tk-приложения на macOS:
+- Библиотека медиа с превью, фильтрами по типу и поиском вместо простого лога
+- Конвертация через `ffmpeg` (аппаратный `h264_videotoolbox` для видео) с выбором формата на файл, а не просто сортировка по расширению
+- Общий `.app` + `.dmg` через PyInstaller, без зависимости от `python-tk`/системного Tcl-Tk
+
+Запуск локально:
+
+```bash
+pip install -r requirements.txt   # добавляет pywebview к pycryptodome
+brew install ffmpeg
+python macos/main.py              # запускать из корня репозитория, чтобы `import app` сработал
+```
+
+Сборка `.app` + `.dmg`:
+
+```bash
+chmod +x macos/build.sh
+./macos/build.sh
+```
+
+Результат — `dist/TelegramCacheExtractor-macos.app` и `dist/TelegramCacheExtractor-macos-<версия>.dmg` (ad-hoc подпись; для раздачи за пределами своей машины нужна нотаризация — команды `notarytool`/`stapler` печатает сам скрипт). Подробности и описание локального API — в `macos/README.md`.
+
 ## Лицензия
 
 OmegaLul Snus Co. License 
